@@ -1,0 +1,67 @@
+body {
+    width: 800px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.turing_information {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.turing_information .turing_tape {
+    background-color: #8BC0D6;
+    clear: both;
+    padding: 10px;
+
+    font-size: 24px;
+    white-space: pre-line;
+    font-family: monospace, serif;
+
+    text-align: center;
+
+}
+
+.turing_information .turing_tape span {
+    font-weight: bold;
+    background-color: #D6A18B;
+    border: solid 1px #D46639;
+}
+
+.turing_information .turing_steps {
+    float: left;
+    padding: 10px;
+}
+
+.turing_information .turing_state {
+    float: left;
+    padding: 10px;
+}
+
+.turing_information .turing_message {
+    float: left;
+    padding: 10px;
+}
+
+.turing_controls {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.turing_input {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.turing_script {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.turing_script textarea {
+    width: 400px;
+    height: 300px;
+
+    font-size: 16px;
+    font-family: monospace, serif;
+}

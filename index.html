@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <title>Turing Machine</title>
+        <link href="reset.css" media="all" type="text/css" rel="stylesheet" />
+        <link href="style.css" media="all" type="text/css" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="turing_information">
+            <div class="turing_steps">Steps: <span></span></div>
+            <div class="turing_state">State: <span></span></div>
+            <div class="turing_message"></div>
+            <div class="turing_tape">
+                <pre></pre>
+            </div>
+        </div>
+
+        <div class="turing_controls">
+            <button name="turing_control_play">Play</button>
+            <button name="turing_control_pause">Pause</button>
+            <button name="turing_control_next">Next</button>
+            <button name="turing_control_reset">Reset</button>
+            <button name="turing_control_fast">Fast Play</button>
+        </div>
+
+        <div class="turing_input">
+            <input type="text" name="turing_input" value="1000111" />
+            <button name="turing_submit_input">Load Input</button>
+        </div>
+
+        <div class="turing_script">
+            <textarea name="turing_script"></textarea>
+            <br />
+            <button name="turing_submit_script">Load Script</button>
+        </div>
+
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>
