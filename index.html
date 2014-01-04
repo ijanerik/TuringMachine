@@ -28,7 +28,26 @@
         </div>
 
         <div class="turing_script">
-            <textarea name="turing_script"></textarea>
+            <textarea name="turing_script">
+; Kijk of er een even aantal 0'en
+; in de input reeks zitten.
+
+; De begin state
+start=q0
+
+; De state die aangeeft dat
+; de input correct is
+accept=qa
+
+; Eindigetoestandsautomaat instellingen
+q0,0 q1,0,>
+q0,1 q0,1,>
+
+q1,0 q0,0,>
+q1,1 q1,1,>
+
+q0,_ qa,_,-
+</textarea>
             <br />
             <button name="turing_submit_script">Load Script</button>
         </div>

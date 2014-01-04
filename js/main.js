@@ -22,7 +22,7 @@ function TuringMachine() {
             var useableState = null;
             stepsDone++;
             var currentTapeSymbol = currentTape[currentTapeIndex];
-            if(typeof currentTapeSymbol == "undefined") {
+            if(typeof currentTapeSymbol == "undefined" || currentTapeSymbol == " ") {
                 currentTapeSymbol = "_";
             }
 
@@ -39,7 +39,12 @@ function TuringMachine() {
                 return currentStatus;
             }
 
-            currentTape[currentTapeIndex] = useableState.newSymbol;
+            if(useableState.newSymbol == "_") {
+                useableState.newSymbol = " ";
+            }
+
+            currentTape = currentTape.substr(0, currentTapeIndex) + useableState.newSymbol + currentTape.substr(currentTapeIndex + 1);
+
             currentState = useableState.newState;
             if(useableState.direction === '<') {
                 currentTapeIndex--;
@@ -80,6 +85,12 @@ function TuringMachine() {
             this.acceptState = 'qa';
         }
 
+        if(typeof dataArray.settings.tape !== "undefined" && dataArray.settings.tape.length >= 1) {
+            this.defaultTape = dataArray.settings.tape.replace("_", " ");
+        } else {
+            this.defaultTape = "10001";
+        }
+
         this.definedStates = dataArray.states;
         this.reset();
     }
@@ -107,21 +118,21 @@ function CompilerTuringFile() {
             settings: {}
         };
 
-        var settingMatches = matchAllRegex(/^\s*([a-zA-Z0-9]+)=([a-zA-Z0-9]+)\s*$/m, data);
+        var settingMatches = matchAllRegex(/^\s*([a-zA-Z0-9]+)=([a-zA-Z0-9\+\-\*\=]+)\s*$/m, data);
         for(var i = 0; i < settingMatches.length; ++i) {
             dataArray.settings[settingMatches[i][1]] = settingMatches[i][2];
         }
 
-        var statesMatches = matchAllRegex(/^\s*([a-zA-Z0-9]+),([a-zA-Z0-9_])\s*([a-zA-Z0-9_]+),([a-zA-Z0-9_]),([\<\>\-])\s*$/m, data);
+        var statesMatches = matchAllRegex(/^\s*([a-zA-Z0-9]+),([a-zA-Z0-9_\+\-\*\=])\s*([a-zA-Z0-9]+),([a-zA-Z0-9_\+\-\*\=]),([\<\>\-])\s*$/m, data);
         for(var i = 0; i < statesMatches.length; ++i) {
             var state = statesMatches[i];
 
             dataArray.states.push({
-                currentState: state[1].trim(),
-                currentSymbol: state[2].trim(),
-                newState: state[3].trim(),
-                newSymbol: state[4].trim(),
-                direction: state[5].trim()
+                currentState: state[1],
+                currentSymbol: state[2],
+                newState: state[3],
+                newSymbol: state[4],
+                direction: state[5]
             });
         }
 
@@ -220,7 +231,7 @@ var turingView = {
            return;
        }
 
-       setTimeout(turingView.turingPlayFast, 1);
+       setTimeout(turingView.turingPlayFast, 0);
     },
 
     turingScriptLoad: function() {
