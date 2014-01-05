@@ -27,7 +27,7 @@ function TuringMachine() {
             }
 
             for(var i = 0; i < this.definedStates.length; ++i) {
-                if(this.definedStates[i].currentState === currentState && this.definedStates[i].currentSymbol == currentTapeSymbol) {
+                if(this.definedStates[i].currentState === currentState && (this.definedStates[i].currentSymbol == currentTapeSymbol || this.definedStates[i].currentSymbol == '*')) {
                     useableState = this.definedStates[i];
                     break;
                 }
@@ -43,7 +43,11 @@ function TuringMachine() {
                 useableState.newSymbol = " ";
             }
 
-            currentTape = currentTape.substr(0, currentTapeIndex) + useableState.newSymbol + currentTape.substr(currentTapeIndex + 1);
+
+            if(useableState.newSymbol != '*')
+            {
+                currentTape = currentTape.substr(0, currentTapeIndex) + useableState.newSymbol + currentTape.substr(currentTapeIndex + 1);
+            }
 
             currentState = useableState.newState;
             if(useableState.direction === '<') {
@@ -115,26 +119,37 @@ function CompilerTuringFile() {
     this.compile = function(data) {
         var dataArray = {
             states: [],
-            settings: {}
+            settings: {},
+            messages: []
         };
+        data = data.replace(/\;(.*)/g, "");
 
-        var settingMatches = matchAllRegex(/^\s*([a-zA-Z0-9]+)=([a-zA-Z0-9\+\-\*\=]+)\s*$/m, data);
-        for(var i = 0; i < settingMatches.length; ++i) {
-            dataArray.settings[settingMatches[i][1]] = settingMatches[i][2];
+        var dataLines = data.split(/\r?\n/);
+
+        for(var i = 0; i < dataLines.length; ++i) {
+            var settingsMatch = null;
+            var statesMatch = null;
+
+            dataLines[i] = dataLines[i].trim();
+
+
+            if((settingsMatch = dataLines[i].match(/^([a-zA-Z0-9]+)=([a-zA-Z0-9\+\-\*\=]+)$/)) !== null) {
+                dataArray.settings[settingsMatch[1]] = settingsMatch[2];
+            } else if((statesMatch = dataLines[i].match(/^([a-zA-Z0-9]+),([a-zA-Z0-9_\+\-\*\=])\s*([a-zA-Z0-9]+),([a-zA-Z0-9_\+\-\*\=]),([\<\>\-])$/)) !== null) {
+                dataArray.states.push({
+                    currentState: statesMatch[1],
+                    currentSymbol: statesMatch[2],
+                    newState: statesMatch[3],
+                    newSymbol: statesMatch[4],
+                    direction: statesMatch[5]
+                });
+            } else if(dataLines[i].match(/^\s*$/)) {
+            } else {
+                dataArray.messages.push('Invalid command on line '+(i+1)+'.');
+            }
         }
 
-        var statesMatches = matchAllRegex(/^\s*([a-zA-Z0-9]+),([a-zA-Z0-9_\+\-\*\=])\s*([a-zA-Z0-9]+),([a-zA-Z0-9_\+\-\*\=]),([\<\>\-])\s*$/m, data);
-        for(var i = 0; i < statesMatches.length; ++i) {
-            var state = statesMatches[i];
-
-            dataArray.states.push({
-                currentState: state[1],
-                currentSymbol: state[2],
-                newState: state[3],
-                newSymbol: state[4],
-                direction: state[5]
-            });
-        }
+        console.log(dataArray.messages);
 
         return dataArray;
     }
@@ -183,10 +198,10 @@ var turingView = {
 
     changes: {
         highlightTapeSymbol: function(index) {
-            var currentTape = turingView.tapeDiv.text();
-            var currentSymbol = currentTape[index];
-            var beforeTape = currentTape.substr(0, index);
-            var afterTape = currentTape.substr(index + 1);
+            var theCurrentTape = turingView.tapeDiv.text();
+            var currentSymbol = theCurrentTape[index];
+            var beforeTape = theCurrentTape.substr(0, index);
+            var afterTape = theCurrentTape.substr(index + 1);
 
             if(typeof currentSymbol == "undefined") {
                 currentSymbol = " ";
@@ -199,6 +214,7 @@ var turingView = {
     turingNext: function() {
         var data = turingView.machine.next();
         turingView.updateView();
+
         return data;
     },
 
