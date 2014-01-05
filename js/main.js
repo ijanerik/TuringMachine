@@ -11,6 +11,7 @@ function TuringMachine() {
     var stepsDone = 0;
     var currentState = 'qs';
     var currentTapeIndex = 0;
+    // TODO Tape must become a object (For negative index)
     var currentTape = "10001";
     var currentStatus = 0;
 
